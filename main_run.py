@@ -1,13 +1,19 @@
-from modules import regression_model_accuracy, plotActualVsPredicted, splitData, preProcessData, viewCorrelation, removeFeatures, find_outliers, pcaTraining, pcaTest, linearRegressionModel
+from modules import k_fold_cv, regression_model_accuracy, plotActualVsPredicted, splitData, preProcessData, viewCorrelation, removeFeatures, find_outliers, pcaTraining, pcaTest, linearRegressionModel
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
+# READ ME
+# TO DOWNLOAD ALL LIBRARIES USED, RUN IN YOUR TERMINAL:
+# pip install numpy scipy scikit-learn matplotlib seaborn pandas
+
+
+
 # Load up the data
 df = pd.read_csv('household_energy_data.csv')
 
-# Remove bad stuff from data
+# Remove Infinite and NaN values from data
 data_preprocessed = preProcessData(df)
 
 # View correlation between features
@@ -15,13 +21,13 @@ viewCorrelation(data_preprocessed) # View correlation between features
 # Remove low-correlated features from data
 data_clean = removeFeatures(data_preprocessed) 
 
-# Split Data into train/test features
+# Split Data into train/test sub-datasets.
 X_train, X_test, y_train, y_test = splitData(data_clean, test_size=0.3, random_state=15)
 
 
 # Find outliers in training set
 outlier_indices = find_outliers(X_train)
-# Remove outliers from the training data and labels
+# Remove outliers from the training data and their corresponding labels
 X_train_clean = X_train.drop(index=outlier_indices)
 y_train_clean = y_train.drop(index=outlier_indices)
 
@@ -39,7 +45,9 @@ accuracy = regression_model_accuracy(y_test, y_pred, tolerance=0.3)
 print(f"Percentage of predictions within 30% of actual values: {accuracy}%")
 
 
-# See what the accuracy is without the data cleaning
+# Replace removal of rows w/ NaN/Inf values with KNN Imputation
+# K-fold Cross Validation
+# Replace Z-Score with Isolation Forest
 
 
 
@@ -70,27 +78,4 @@ print(f"Percentage of predictions within 30% of actual values: {accuracy}%")
 
 
 
-# Pyspark, Ray = Distributed Processing
-# Tensorflow, Pytorch = Deep Learning
-# Scikit Learn, Pyspark = Machine Learning
-# Pandas, Pyspark = ETL
-# Matplotlib, Plotly (Best), Seaborn = Data Visualisation
 
-"""
-import pandas as pd
-import glob
-
-# Find all files matching the pattern
-files = glob.glob('household_energy_data.csv*')
-
-# Optional: Sort the files if needed, this might help in selecting the most relevant file
-files.sort()
-
-# Check if any files were found
-if files:
-    # Read the first file from the list
-    df = pd.read_csv(files[0])
-    print("Data loaded from:", files[0])
-else:
-    print("No files found matching the pattern.")
-"""

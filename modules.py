@@ -185,4 +185,3 @@ def regression_model_accuracy(y_test, y_pred, tolerance):
     return accuracy_percentage
 
 
-
